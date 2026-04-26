@@ -32,7 +32,7 @@ const Login = () => {
           <h1 className="text-white text-4xl font-bold m-3">{isSignin ? "Signin" : "Sign up"}  </h1>
           <input ref={email} type="text" className="m-3 p-2 bg-white rounded-md w-2/3" placeholder="Enter your email" />
           <input ref={password} type="password" className="m-3 p-2 bg-white rounded-md w-2/3" placeholder="Enter your password"></input>
-          <button type="submit" className="bg-gray-400 w-30 rounded-md p-2 m-3 cursor-pointer">Submit</button>
+          <button type="submit" className="bg-gray-400 w-30 rounded-md p-2 m-3 cursor-pointer">Submitt</button>
           <h5 onClick={toggleInputBox} className="m-3 p-2">{isSignin ? "Are You New to Netflix ? Signup" : "Login to your account"}</h5>
         </form>
       </div>
