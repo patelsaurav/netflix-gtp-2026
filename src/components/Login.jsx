@@ -1,8 +1,13 @@
 import Header from "./Header";
 import { useState, useRef } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [isSignin, setIsSignin] = useState(true)
-
+  // Use the initialized auth instance from firebase.js
+  const navigate = useNavigate()
   /*useRef use*/
   const email = useRef(null);
   const password = useRef(null);
@@ -14,7 +19,36 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("password", password.current?.value);
+    console.log("password", password.current?.value, isSignin);
+    if (isSignin) {
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          alert("login successfully")
+          navigate('/browse')
+
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert(errorMessage)
+
+        });
+    } else {
+
+      console.log("we are hre", email.current.value)
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value).then((usercreditial) => {
+        const user = usercreditial.user;
+        //we can also store user detail in firebase for that firebase provide getprofile and update profile user
+        navigate('/browse')
+      }).catch((error) => {
+        console.log("we are here", error)
+        const errorCode = error.code;
+        const errouserrMessage = error.message;
+        alert(errouserrMessage)
+      })
+    }
   }
 
   return (
