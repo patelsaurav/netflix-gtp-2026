@@ -53,7 +53,7 @@ const Login = () => {
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
 
       <div className="relative h-screen">
         <img

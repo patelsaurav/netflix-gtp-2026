@@ -1,24 +1,59 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../utils/firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { addUser, deleteUser } from "../utils/userSlice.js";
+import { useEffect } from "react";
+import { logo } from "../utils/constant.js";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-    const navigate = useNavigate()
-    const signoutclick = () => {
-        signOut(auth).then(() => {
-            navigate("/")
-        }).catch((error) => {
-        });
-    }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, displayName, email } = user;
+        dispatch(addUser({ uid, displayName, email }));
+        navigate("/browse");
+      } else {
+        dispatch(deleteUser());
+        navigate("/");
+      }
+    });
 
-    return (
-        <div className="flex justify-between absolute z-10  w-full">
-            <div className="w-40  m-3 p-3"><img src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2026-04-16/consent/87b6a5c0-0104-4e96-a291-092c11350111/019ae4b5-d8fb-7693-90ba-7a61d24a8837/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png" alt="logo" /></div>
-            <button onClick={signoutclick} className="text-white bg-red-500 rounded-md m-3 p-3">Signout</button>
-        </div>
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
+  const signoutclick = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-    );
+  return (
+    <div className="flex justify-between absolute z-10 w-full">
+      <div className="w-40 m-3 p-3">
+        <img src={logo} alt="logo" />
+      </div>
+
+      {location.pathname === "/browse" && (
+        <button
+          onClick={signoutclick}
+          className="text-white bg-red-500 rounded-md m-3 p-3"
+        >
+          Signout
+        </button>
+      )}
+    </div>
+  );
 };
+
 export default Header;
